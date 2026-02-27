@@ -1,5 +1,4 @@
 #include "complex_info.h"
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 // реализация операций для complex

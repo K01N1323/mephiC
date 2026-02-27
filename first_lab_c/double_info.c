@@ -1,5 +1,4 @@
 #include "double_info.h"
-#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 static void sum_double(const void* a, const void* b, void* out){

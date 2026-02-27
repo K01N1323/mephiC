@@ -1,6 +1,5 @@
 #include "int_info.h"
 #include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
 static void sum_int(const void* a, const void*b, void* out){
     const int* a1 = (const int*)a;
@@ -21,7 +20,7 @@ static void plus_int(const void* matrix1,const void* matrix2, void* rez){
     const Matrix* r = (const Matrix*)rez;
     // проверка на передачу нам одинаковых форматов
     if (m1->typeinfo != m2->typeinfo) return;
-    // проверки на неправильные форматы
+    // проверки на неправильные формы матрмц
     if (m1->rows!=m2->rows || m1->cols!=m2->cols) {
            return;
        }
