@@ -3,15 +3,13 @@
 #include "matrix.h"
 #include "data.h"
 #include "complex_info.h"
-#include "int_info.h"
-#include "double_info.h"
-#include <string.h>
+#include "int_info.h"  
 #include <stdlib.h>
 #define max_matrices 50
 static Matrix* matrices[max_matrices];
 static int matrices_count = 0;
 void print_menu(void){
-    printf("Выберите действие: ");
+    printf("Выберите действие: \n");
     printf("1 – создать int матрицу\n");
     printf("2 – создать double матрицу\n");
     printf("3 – создать complex матрицу\n");
@@ -39,7 +37,7 @@ int actions(int flag){
         case 1: {
             printf("Введите количество строк и рядов в матрице: ");
             scanf("%d %d", &rows, &cols);
-            TypeInfo* type = GetIntInfo();
+            const TypeInfo* type = GetIntInfo();
             Matrix* new_matrix = matrix_create(type, rows, cols);
             if (matrices_count < max_matrices){
                 matrices[matrices_count] = new_matrix;
@@ -54,7 +52,7 @@ int actions(int flag){
         case 2: {
             printf("Введите количество строк и рядов в матрице: ");
             scanf("%d %d", &rows, &cols);
-            TypeInfo* type = GetDoubleInfo();
+            const TypeInfo* type = GetDoubleInfo();
             Matrix* new_matrix = matrix_create(type, rows, cols);
             if (matrices_count < max_matrices){
                 matrices[matrices_count] = new_matrix;
@@ -69,7 +67,7 @@ int actions(int flag){
         case 3: {
             printf("Введите количество строк и рядов в матрице: ");
             scanf("%d %d", &rows, &cols);
-            TypeInfo* type = GetComplexleInfo();
+            const TypeInfo* type = GetComplexleInfo();
             Matrix* new_matrix = matrix_create(type, rows, cols);
             if (matrices_count < max_matrices){
                 matrices[matrices_count] = new_matrix;
@@ -89,7 +87,7 @@ int actions(int flag){
                 printf("Матрицы с таким номером нет\n");
             }else{
                 Matrix* current_matrix = matrices[num];
-                current_matrix->typeinfo->print(current_matrix, num_element);
+                current_matrix->print(current_matrix, num_element);
             }
             break;
         }
@@ -100,7 +98,7 @@ int actions(int flag){
                 printf("Матрицы с таким номером нет\n");
             }else{
                 Matrix* current_matrix = matrices[num];
-                current_matrix->typeinfo->print(current_matrix, num_element);
+                current_matrix->print(current_matrix, num_element);
             }
             break;
         }
@@ -152,7 +150,7 @@ int actions(int flag){
                     return 0;
                 }
                 Matrix* c = matrix_create(a->typeinfo, a->rows, a->cols);
-                a->typeinfo->plus(a, b, c);
+                a->plus(a, b, c);
                 matrices[matrices_count] = c;
                 printf("Результат сложения записан в матрицу под номером %d\n", matrices_count);
                 matrices_count++;
@@ -182,7 +180,7 @@ int actions(int flag){
                 return 0;
             }
             Matrix* c = matrix_create(a->typeinfo, a->rows, b->cols);
-            a->typeinfo->multiplication(a, b, c);
+            a->multiplication(a, b, c);
             matrices[matrices_count] = c;
             printf("Результат умножения записан в матрицу под номером %d\n", matrices_count);
             matrices_count++;
@@ -205,17 +203,17 @@ int actions(int flag){
                 int sc;
                 printf("Введите int‑скаляр: ");
                 scanf("%d", &sc);
-                m->typeinfo->scalar_multiplication(m, &sc, r);
+                m->scalar_multiplication(m, &sc, r);
             } else if (m->typeinfo == GetDoubleInfo()){
                 double sc;
                 printf("Введите double‑скаляр: ");
                 scanf("%lf", &sc);
-                m->typeinfo->scalar_multiplication(m, &sc, r);
+                m->scalar_multiplication(m, &sc, r);
             } else if (m->typeinfo == GetComplexleInfo()){
                 imagine sc;
                 printf("Введите действительную и мнимую части скаляра: ");
                 scanf("%lf %lf", &sc.re, &sc.im);
-                m->typeinfo->scalar_multiplication(m, &sc, r);
+                m->scalar_multiplication(m, &sc, r);
             } else {
                 printf("Неизвестный тип матрицы\n");
                 matrix_free(r);
@@ -239,7 +237,7 @@ int actions(int flag){
                 return 0;
             }
             Matrix* t = matrix_create(m->typeinfo, m->cols, m->rows);
-            m->typeinfo->transponation(m, t);
+            m->transponation(m, t);
             matrices[matrices_count] = t;
             printf("Результат транспонирования записан в матрицу под номером %d\n", matrices_count);
             matrices_count++;
@@ -291,7 +289,7 @@ int actions(int flag){
                 for (int k = 0; k < coef_count; k++) {
                     scanf("%d", &alphas[k]);
                 }
-                result =  m->typeinfo->AddLinearCombination(m, rowIndex, alphas);
+                result =  m->add_linear_combination(m, rowIndex, alphas);
                 free(alphas);
             } else if (m->typeinfo == GetDoubleInfo()) {
                 double* alphas = malloc(coef_count * sizeof(double));
@@ -300,7 +298,7 @@ int actions(int flag){
                 for (int k = 0; k < coef_count; k++) {
                     scanf("%lf", &alphas[k]);
                 }
-                result = m->typeinfo->AddLinearCombination(m, rowIndex, alphas);
+                result = m->add_linear_combination(m, rowIndex, alphas);
                 free(alphas);
             } else if (m->typeinfo == GetComplexleInfo()) {
                 imagine* alphas = malloc(coef_count * sizeof(imagine));
@@ -309,7 +307,7 @@ int actions(int flag){
                 for (int k = 0; k < coef_count; k++) {
                     scanf("%lf %lf", &alphas[k].re, &alphas[k].im);
                 }
-                result =  m->typeinfo->AddLinearCombination(m, rowIndex, alphas);
+                result =  m->add_linear_combination(m, rowIndex, alphas);
                 free(alphas);
             }
             matrices[matrices_count] = result;
@@ -326,10 +324,9 @@ int actions(int flag){
             printf("\n");
             break;
         }
-        default: {
+        default:
             printf("Команда, которую вы ввели не существует\n");
             break;
-        }
     }
     return 0;
 }

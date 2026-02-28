@@ -5,4 +5,3 @@ void start_auto_tests(void);
 
 #endif // tests.h
 
-

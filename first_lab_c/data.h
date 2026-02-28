@@ -4,7 +4,7 @@
 #include "complex_info.h"
 #include "int_info.h"
 #include "double_info.h"
-Matrix* matrix_create(TypeInfo* type, int rows, int cols);
+Matrix* matrix_create(const TypeInfo* type, int rows, int cols);
 void matrix_free(Matrix* m);
 // геттеры для элемента и целой матрицы
 void matrix_get(const Matrix *m, int i, int j, void* out);

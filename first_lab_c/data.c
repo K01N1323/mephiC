@@ -1,13 +1,20 @@
+#include "matrix_operations.h"
 #include "data.h"
 #include <string.h>
 #include <stdlib.h>
 // создать новую матрицу
-Matrix* matrix_create(TypeInfo* type, int rows, int cols){
+Matrix* matrix_create(const TypeInfo* type, int rows, int cols){
     Matrix* m = malloc(sizeof(Matrix));
     if (!m) return NULL;
     m->rows = rows;
     m->cols = cols;
     m->typeinfo = type;
+    m->plus = generic_plus;
+    m->multiplication = generic_multiplication;
+    m->scalar_multiplication = generic_scalar_multiplication;
+    m->transponation = generic_transponation;
+    m->add_linear_combination = generic_add_linear_combination;
+    m->print = generic_print;
     m->matrix = malloc((type->size)*cols*rows);
     if (!(m->matrix)){
         free(m);

@@ -128,7 +128,7 @@ static void gen_complex_basic(imagine* buf, int n) {
 static void test_int_plus_positive_negative(void) {
     printf("НАЧАЛО test_int_plus_positive_negative\n");
 
-    TypeInfo* t = GetIntInfo();
+    const TypeInfo* t = GetIntInfo();
     int rows = 2, cols = 3;
     int total = rows * cols;
 
@@ -151,7 +151,7 @@ static void test_int_plus_positive_negative(void) {
     matrix_setall(a, da);
     matrix_setall(b, db);
 
-    t->plus(a, b, c);
+    a->plus(a, b, c);
     matrix_getall(c, result);
 
     assert(eq_int_array(result, expected, total));
@@ -166,7 +166,7 @@ static void test_int_plus_positive_negative(void) {
 static void test_int_multiplication_even_odd(void) {
     printf("НАЧАЛО test_int_multiplication_even_odd\n");
 
-    TypeInfo* t = GetIntInfo();
+    const TypeInfo* t = GetIntInfo();
     int rows = 2, cols = 2;
     int total = rows * cols;
 
@@ -197,7 +197,7 @@ static void test_int_multiplication_even_odd(void) {
     matrix_setall(a, da);
     matrix_setall(b, db);
 
-    t->multiplication(a, b, c);
+    a->multiplication(a, b, c);
     matrix_getall(c, result);
 
     assert(eq_int_array(result, expected, total));
@@ -212,7 +212,7 @@ static void test_int_multiplication_even_odd(void) {
 static void test_int_scalar_mixed(void) {
     printf("НАЧАЛО test_int_scalar_mixed\n");
 
-    TypeInfo* t = GetIntInfo();
+    const TypeInfo* t = GetIntInfo();
     int rows = 3, cols = 3;
     int total = rows * cols;
 
@@ -231,7 +231,7 @@ static void test_int_scalar_mixed(void) {
     }
 
     matrix_setall(a, da);
-    t->scalar_multiplication(a, &sc, c);
+    a->scalar_multiplication(a, &sc, c);
     matrix_getall(c, result);
 
     assert(eq_int_array(result, expected, total));
@@ -245,7 +245,7 @@ static void test_int_scalar_mixed(void) {
 static void test_int_transpose_positive(void) {
     printf("НАЧАЛО test_int_transpose_positive\n");
 
-    TypeInfo* t = GetIntInfo();
+    const TypeInfo* t = GetIntInfo();
     int rows = 2, cols = 3;
     int total = rows * cols;
 
@@ -266,7 +266,7 @@ static void test_int_transpose_positive(void) {
     }
 
     matrix_setall(a, da);
-    t->transponation(a, tr);
+    a->transponation(a, tr);
     matrix_getall(tr, result);
 
     assert(eq_int_array(result, expected, total));
@@ -281,7 +281,7 @@ static void test_int_transpose_positive(void) {
 static void test_double_plus_positive_negative(void) {
     printf("НАЧАЛО test_double_plus_positive_negative\n");
 
-    TypeInfo* t = GetDoubleInfo();
+    const TypeInfo* t = GetDoubleInfo();
     int rows = 2, cols = 3;
     int total = rows * cols;
 
@@ -303,7 +303,7 @@ static void test_double_plus_positive_negative(void) {
 
     matrix_setall(a, da);
     matrix_setall(b, db);
-    t->plus(a, b, c);
+    a->plus(a, b, c);
     matrix_getall(c, result);
 
     assert(eq_double_array(result, expected, total, 1e-9));
@@ -318,7 +318,7 @@ static void test_double_plus_positive_negative(void) {
 static void test_double_multiplication_even_odd(void) {
     printf("НАЧАЛО test_double_multiplication_even_odd\n");
 
-    TypeInfo* t = GetDoubleInfo();
+    const TypeInfo* t = GetDoubleInfo();
     int rows = 2, cols = 2;
     int total = rows * cols;
 
@@ -348,7 +348,7 @@ static void test_double_multiplication_even_odd(void) {
 
     matrix_setall(a, da);
     matrix_setall(b, db);
-    t->multiplication(a, b, c);
+    a->multiplication(a, b, c);
     matrix_getall(c, result);
 
     assert(eq_double_array(result, expected, total, 1e-9));
@@ -364,7 +364,7 @@ static void test_double_multiplication_even_odd(void) {
 static void test_complex_plus_basic(void) {
     printf("НАЧАЛО test_complex_plus_basic\n");
 
-    TypeInfo* t = GetComplexleInfo();
+    const TypeInfo* t = GetComplexleInfo();
     int rows = 2, cols = 2;
     int total = rows * cols;
 
@@ -387,7 +387,7 @@ static void test_complex_plus_basic(void) {
 
     matrix_setall(a, da);
     matrix_setall(b, db);
-    t->plus(a, b, c);
+    a->plus(a, b, c);
     matrix_getall(c, result);
 
     assert(eq_complex_array(result, expected, total, 1e-9));

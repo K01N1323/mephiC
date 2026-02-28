@@ -1,18 +1,16 @@
 #ifndef TYPEINFO_H
 #define TYPEINFO_H
 #include "matrix.h"
-#include <stdlib.h>
-
+#include <stddef.h>
 typedef struct Matrix Matrix;
 typedef struct{
     size_t size;
     void (*sum)(const void* a, const void* b, void* out);
     void (*mull)(const void* a, const void* b, void* out);
-    void (*plus)(const void* matrix1,const void*matrix2, void* rez);
-    void (*multiplication)(const void* matrix1,const void*matrix2, void* rez);
-    void (*scalar_multiplication)(const void* matrix1,const void* scalar, void* rez);
-    void (*transponation)(const void* matrix, void* rez);
-    Matrix* (*AddLinearCombination)(Matrix* matrix, int rowIndex, void* alphas);
-    void (*print)(const void* matrix, int el);
+    void (*print_element)(const void* elem);
 }TypeInfo;
 #endif //typeinfo.h
+// перенести функции в структуру Matrix
+// геттеры инфы о данных const
+// функция печати элемента одна для всеъ типов данных
+// она вызывает печать из себя всей матрицы
