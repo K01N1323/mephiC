@@ -360,6 +360,74 @@ static void test_double_multiplication_even_odd(void) {
     printf("test_double_multiplication_even_odd ПРОЙДЕН\n");
 }
 
+static void test_double_scalar_mixed(void) {
+    printf("НАЧАЛО test_double_scalar_mixed\n");
+
+    const TypeInfo* t = GetDoubleInfo();
+    int rows = 3, cols = 3;
+    int total = rows * cols;
+
+    Matrix* a = matrix_create(t, rows, cols);
+    Matrix* c = matrix_create(t, rows, cols);
+
+    double da[9];
+    double expected[9];
+    double result[9];
+    double sc = -2.5;
+
+    gen_double_mixed(da, total);
+
+    for (int i = 0; i < total; i++) {
+        expected[i] = da[i] * sc;
+    }
+
+    matrix_setall(a, da);
+    a->scalar_multiplication(a, &sc, c);
+    matrix_getall(c, result);
+
+    assert(eq_double_array(result, expected, total, 1e-9));
+
+    matrix_free(a);
+    matrix_free(c);
+
+    printf("test_double_scalar_mixed ПРОЙДЕН\n");
+}
+
+static void test_double_transpose_positive(void) {
+    printf("НАЧАЛО test_double_transpose_positive\n");
+
+    const TypeInfo* t = GetDoubleInfo();
+    int rows = 2, cols = 3;
+    int total = rows * cols;
+
+    Matrix* a  = matrix_create(t, rows, cols);
+    Matrix* tr = matrix_create(t, cols, rows);
+
+    double da[6];
+    double expected[6];
+    double result[6];
+
+    gen_double_positive(da, total);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            double val = da[i*cols + j];
+            expected[j*rows + i] = val;
+        }
+    }
+
+    matrix_setall(a, da);
+    a->transponation(a, tr);
+    matrix_getall(tr, result);
+
+    assert(eq_double_array(result, expected, total, 1e-9));
+
+    matrix_free(a);
+    matrix_free(tr);
+
+    printf("test_double_transpose_positive ПРОЙДЕН\n");
+}
+
 // тесты для complex
 static void test_complex_plus_basic(void) {
     printf("НАЧАЛО test_complex_plus_basic\n");
@@ -399,6 +467,121 @@ static void test_complex_plus_basic(void) {
     printf("test_complex_plus_basic ПРОЙДЕН\n");
 }
 
+static void test_complex_multiplication_basic(void) {
+    printf("НАЧАЛО test_complex_multiplication_basic\n");
+
+    const TypeInfo* t = GetComplexleInfo();
+    int rows = 2, cols = 2;
+    int total = rows * cols;
+
+    Matrix* a = matrix_create(t, rows, cols);
+    Matrix* b = matrix_create(t, rows, cols);
+    Matrix* c = matrix_create(t, rows, cols);
+
+    imagine da[4];
+    imagine db[4];
+    imagine expected[4];
+    imagine result[4];
+
+    gen_complex_basic(da, total);
+    gen_complex_basic(db, total);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            imagine sum = {0.0, 0.0};
+            for (int k = 0; k < cols; k++) {
+                imagine a_ik = da[i*cols + k];
+                imagine b_kj = db[k*cols + j];
+                sum.re += a_ik.re * b_kj.re - a_ik.im * b_kj.im;
+                sum.im += a_ik.re * b_kj.im + a_ik.im * b_kj.re;
+            }
+            expected[i*cols + j] = sum;
+        }
+    }
+
+    matrix_setall(a, da);
+    matrix_setall(b, db);
+    a->multiplication(a, b, c);
+    matrix_getall(c, result);
+
+    assert(eq_complex_array(result, expected, total, 1e-9));
+
+    matrix_free(a);
+    matrix_free(b);
+    matrix_free(c);
+
+    printf("test_complex_multiplication_basic ПРОЙДЕН\n");
+}
+
+static void test_complex_scalar_basic(void) {
+    printf("НАЧАЛО test_complex_scalar_basic\n");
+
+    const TypeInfo* t = GetComplexleInfo();
+    int rows = 3, cols = 3;
+    int total = rows * cols;
+
+    Matrix* a = matrix_create(t, rows, cols);
+    Matrix* c = matrix_create(t, rows, cols);
+
+    imagine da[9];
+    imagine expected[9];
+    imagine result[9];
+    imagine sc = {2.0, -1.5};
+
+    gen_complex_basic(da, total);
+
+    for (int i = 0; i < total; i++) {
+        expected[i].re = da[i].re * sc.re - da[i].im * sc.im;
+        expected[i].im = da[i].re * sc.im + da[i].im * sc.re;
+    }
+
+    matrix_setall(a, da);
+    a->scalar_multiplication(a, &sc, c);
+    matrix_getall(c, result);
+
+    assert(eq_complex_array(result, expected, total, 1e-9));
+
+    matrix_free(a);
+    matrix_free(c);
+
+    printf("test_complex_scalar_basic ПРОЙДЕН\n");
+}
+
+static void test_complex_transpose_basic(void) {
+    printf("НАЧАЛО test_complex_transpose_basic\n");
+
+    const TypeInfo* t = GetComplexleInfo();
+    int rows = 2, cols = 3;
+    int total = rows * cols;
+
+    Matrix* a  = matrix_create(t, rows, cols);
+    Matrix* tr = matrix_create(t, cols, rows);
+
+    imagine da[6];
+    imagine expected[6];
+    imagine result[6];
+
+    gen_complex_basic(da, total);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            imagine val = da[i*cols + j];
+            expected[j*rows + i] = val;
+        }
+    }
+
+    matrix_setall(a, da);
+    a->transponation(a, tr);
+    matrix_getall(tr, result);
+
+    assert(eq_complex_array(result, expected, total, 1e-9));
+
+    matrix_free(a);
+    matrix_free(tr);
+
+    printf("test_complex_transpose_basic ПРОЙДЕН\n");
+}
+
 void start_auto_tests(void) {
     printf("ЗАПУСК АВТОТЕСТОВ МАТРИЦ\n");
 
@@ -411,9 +594,14 @@ void start_auto_tests(void) {
     // double
     test_double_plus_positive_negative();
     test_double_multiplication_even_odd();
+    test_double_scalar_mixed();
+    test_double_transpose_positive();
 
     // complex
     test_complex_plus_basic();
+    test_complex_multiplication_basic();
+    test_complex_scalar_basic();
+    test_complex_transpose_basic();
 
     printf("ВСЕ ТЕСТЫ МАТРИЦ ПРОЙДЕНЫ \n");
 }
