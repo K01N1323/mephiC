@@ -4,6 +4,7 @@
 #include "data.h"
 #include "complex_info.h"
 #include "int_info.h"  
+#include "bool_info.h"
 #include <stdlib.h>
 #define max_matrices 50
 static Matrix* matrices[max_matrices];
@@ -23,6 +24,7 @@ void print_menu(void){
     printf("11 – очистить матрицу\n");
     printf("12 - посчитать прибавление к строке линейной комбинации других строк\n");
     printf("13 - вывести номера матриц, доступных для взаимодействия \n");
+    printf("14 - создать boolean матрицу\n");
     printf("-1 – выйти из программы\n");
 }
 int actions(int flag){
@@ -125,6 +127,12 @@ int actions(int flag){
                 printf("Введите действительную и мнимую части: ");
                 scanf("%lf %lf", &v.re, &v.im);
                 matrix_set(m, i, j, &v);
+            }else if (m->typeinfo == GetBoolInfo()) {
+                int v;
+                printf("Введите логическое значение (0 или 1): ");
+                scanf("%d", &v);
+                v = (v != 0);
+                matrix_set(m, i, j, &v);
             }
             break;
         }
@@ -213,6 +221,12 @@ int actions(int flag){
                 imagine sc;
                 printf("Введите действительную и мнимую части скаляра: ");
                 scanf("%lf %lf", &sc.re, &sc.im);
+                m->scalar_multiplication(m, &sc, r);
+            } else if (m->typeinfo == GetBoolInfo()){
+                int sc;
+                printf("Введите boolean скаляр (0 или 1): ");
+                scanf("%d", &sc);
+                sc = (sc != 0);
                 m->scalar_multiplication(m, &sc, r);
             } else {
                 printf("Неизвестный тип матрицы\n");
@@ -309,6 +323,16 @@ int actions(int flag){
                 }
                 result =  m->add_linear_combination(m, rowIndex, alphas);
                 free(alphas);
+            } else if (m->typeinfo == GetBoolInfo()) {
+                int* alphas = malloc(coef_count * sizeof(int));
+                printf("Введите %d boolean-коэффициентов (для каждой строки кроме %d):\n",
+                       coef_count, rowIndex);
+                for (int k = 0; k < coef_count; k++) {
+                    scanf("%d", &alphas[k]);
+                    alphas[k] = (alphas[k] != 0);
+                }
+                result = m->add_linear_combination(m, rowIndex, alphas);
+                free(alphas);
             }
             matrices[matrices_count] = result;
             printf("Результат записан в матрицу под номером %d\n", matrices_count);
@@ -322,6 +346,21 @@ int actions(int flag){
                 if (matrices[index] != NULL) printf("%d ", index);
             }
             printf("\n");
+            break;
+        }
+        case 14: {
+            printf("Введите количество строк и рядов в матрице: ");
+            scanf("%d %d", &rows, &cols);
+            const TypeInfo* type = GetBoolInfo();
+            Matrix* new_matrix = matrix_create(type, rows, cols);
+            if (matrices_count < max_matrices){
+                matrices[matrices_count] = new_matrix;
+                printf("Матрица создана под номером %d\n", matrices_count);
+                matrices_count++;
+            }else {
+                printf("Нет места для новой матрицы\n");
+                matrix_free(new_matrix);
+            }
             break;
         }
         default:

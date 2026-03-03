@@ -7,6 +7,7 @@
 #include "int_info.h"
 #include "double_info.h"
 #include "complex_info.h"
+#include "bool_info.h"
 #include "tests.h"
 
 
@@ -123,6 +124,8 @@ static void gen_complex_basic(imagine* buf, int n) {
         buf[i].im = (double)(-idx);
     }
 }
+
+
 
 // тесты для int
 static void test_int_plus_positive_negative(void) {
@@ -582,6 +585,102 @@ static void test_complex_transpose_basic(void) {
     printf("test_complex_transpose_basic ПРОЙДЕН\n");
 }
 
+// тесты для bool
+static void test_bool_plus_basic(void) {
+    printf("НАЧАЛО test_bool_plus_basic\n");
+    const TypeInfo* t = GetBoolInfo();
+    int rows = 2, cols = 2, total = rows * cols;
+    Matrix* a = matrix_create(t, rows, cols);
+    Matrix* b = matrix_create(t, rows, cols);
+    Matrix* c = matrix_create(t, rows, cols);
+    
+    int da[4] = {1, 0, 1, 0};
+    int db[4] = {0, 0, 1, 1};
+    int exp[4] = {1, 0, 1, 1};
+    int result[4];
+
+    matrix_setall(a, da);
+    matrix_setall(b, db);
+    a->plus(a, b, c);
+    matrix_getall(c, result);
+
+    assert(eq_int_array(result, exp, total));
+    matrix_free(a); matrix_free(b); matrix_free(c);
+    printf("test_bool_plus_basic ПРОЙДЕН\n");
+}
+
+static void test_bool_multiplication_basic(void) {
+    printf("НАЧАЛО test_bool_multiplication_basic\n");
+    const TypeInfo* t = GetBoolInfo();
+    int rows = 2, cols = 2, total = rows * cols;
+    Matrix* a = matrix_create(t, rows, cols);
+    Matrix* b = matrix_create(t, rows, cols);
+    Matrix* c = matrix_create(t, rows, cols);
+    
+    int da[4] = {1, 1, 0, 1}; 
+    int db[4] = {0, 1, 1, 0}; 
+  
+    int exp[4] = {1, 1, 1, 0};
+    int result[4];
+
+    matrix_setall(a, da);
+    matrix_setall(b, db);
+    a->multiplication(a, b, c);
+    matrix_getall(c, result);
+
+    assert(eq_int_array(result, exp, total));
+    matrix_free(a); matrix_free(b); matrix_free(c);
+    printf("test_bool_multiplication_basic ПРОЙДЕН\n");
+}
+
+static void test_bool_scalar_basic(void) {
+    printf("НАЧАЛО test_bool_scalar_basic\n");
+    const TypeInfo* t = GetBoolInfo();
+    int rows = 2, cols = 2, total = rows * cols;
+    Matrix* a = matrix_create(t, rows, cols);
+    Matrix* c = matrix_create(t, rows, cols);
+    
+    int da[4] = {1, 0, 1, 0};
+    int sc = 1;
+    int exp[4] = {1, 0, 1, 0};
+    int result[4];
+
+    matrix_setall(a, da);
+    a->scalar_multiplication(a, &sc, c);
+    matrix_getall(c, result);
+
+    assert(eq_int_array(result, exp, total));
+    
+    sc = 0;
+    int exp2[4] = {0, 0, 0, 0};
+    a->scalar_multiplication(a, &sc, c);
+    matrix_getall(c, result);
+    assert(eq_int_array(result, exp2, total));
+
+    matrix_free(a); matrix_free(c);
+    printf("test_bool_scalar_basic ПРОЙДЕН\n");
+}
+
+static void test_bool_transpose_basic(void) {
+    printf("НАЧАЛО test_bool_transpose_basic\n");
+    const TypeInfo* t = GetBoolInfo();
+    int rows = 2, cols = 3, total = rows * cols;
+    Matrix* a = matrix_create(t, rows, cols);
+    Matrix* tr = matrix_create(t, cols, rows);
+    
+    int da[6] = {1, 0, 1, 0, 1, 0};
+    int exp[6] = {1, 0, 0, 1, 1, 0};
+    int result[6];
+
+    matrix_setall(a, da);
+    a->transponation(a, tr);
+    matrix_getall(tr, result);
+
+    assert(eq_int_array(result, exp, total));
+    matrix_free(a); matrix_free(tr);
+    printf("test_bool_transpose_basic ПРОЙДЕН\n");
+}
+
 void start_auto_tests(void) {
     printf("ЗАПУСК АВТОТЕСТОВ МАТРИЦ\n");
 
@@ -602,6 +701,12 @@ void start_auto_tests(void) {
     test_complex_multiplication_basic();
     test_complex_scalar_basic();
     test_complex_transpose_basic();
+
+    // bool
+    test_bool_plus_basic();
+    test_bool_multiplication_basic();
+    test_bool_scalar_basic();
+    test_bool_transpose_basic();
 
     printf("ВСЕ ТЕСТЫ МАТРИЦ ПРОЙДЕНЫ \n");
 }
