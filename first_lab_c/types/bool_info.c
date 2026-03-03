@@ -25,7 +25,7 @@ static void print_element_bool(const void* elem) {
 }
 
 static TypeInfo BOOL_TYPEINFO;
-int BOOL_INIT_TYPEINFO = 0;-1
+int BOOL_INIT_TYPEINFO = 0;
 
 const TypeInfo* GetBoolInfo(void) {
     if (BOOL_INIT_TYPEINFO != 1) {
