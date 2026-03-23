@@ -11,6 +11,7 @@
 #include "tests.h"
 
 
+// Сравнивает поэлементно два массива типа int
 static int eq_int_array(const int* a, const int* b, int n) {
     for (int i = 0; i < n; i++) {
         if (a[i] != b[i]) return 0;
@@ -18,6 +19,7 @@ static int eq_int_array(const int* a, const int* b, int n) {
     return 1;
 }
 
+// Сравнивает поэлементно два массива типа double с учетом погрешности eps
 static int eq_double_array(const double* a, const double* b, int n, double eps) {
     for (int i = 0; i < n; i++) {
         if (fabs(a[i] - b[i]) > eps) return 0;
@@ -25,6 +27,7 @@ static int eq_double_array(const double* a, const double* b, int n, double eps) 
     return 1;
 }
 
+// Сравнивает поэлементно два массива комплексных чисел с учетом погрешности eps
 static int eq_complex_array(const imagine* a, const imagine* b, int n, double eps) {
     for (int i = 0; i < n; i++) {
         if (fabs(a[i].re - b[i].re) > eps) return 0;
@@ -34,6 +37,7 @@ static int eq_complex_array(const imagine* a, const imagine* b, int n, double ep
 }
 
 // генераторы данных
+// Заполняет массив положительными значениями int
 static void gen_int_positive(int* buf, int n) {
     for (int i = 0; i < n; i++) {
         int idx = i + 1;
@@ -681,6 +685,7 @@ static void test_bool_transpose_basic(void) {
     printf("test_bool_transpose_basic ПРОЙДЕН\n");
 }
 
+// Запуск всех автотестов
 void start_auto_tests(void) {
     printf("ЗАПУСК АВТОТЕСТОВ МАТРИЦ\n");
 

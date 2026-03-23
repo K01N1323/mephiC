@@ -4,11 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Универсальная функция сложения двух матриц
 void generic_plus(const void* matrix1, const void* matrix2, void* rez) {
     const Matrix* m1 = (const Matrix*)matrix1;
     const Matrix* m2 = (const Matrix*)matrix2;
     Matrix* r = (Matrix*)rez;
     
+    // Проверка совместимости типов и размерностей матриц
     if (m1->typeinfo != m2->typeinfo) return;
     if (m1->rows != m2->rows || m1->cols != m2->cols) return;
     if (r->rows != m1->rows || r->cols != m1->cols) return;
@@ -18,6 +20,7 @@ void generic_plus(const void* matrix1, const void* matrix2, void* rez) {
     char* b = (char*)m2->matrix;
     char* re = (char*)r->matrix;
     
+    // Поэлементное сложение
     for (int row = 0; row < m1->rows; ++row) {
         for (int col = 0; col < m1->cols; ++col) {
             int ind = row * m1->cols + col;
@@ -26,11 +29,13 @@ void generic_plus(const void* matrix1, const void* matrix2, void* rez) {
     }
 }
 
+// Универсальная функция умножения двух матриц
 void generic_multiplication(const void* matrix1, const void* matrix2, void* rez) {
     const Matrix* m1 = (const Matrix*)matrix1;
     const Matrix* m2 = (const Matrix*)matrix2;
     Matrix* r = (Matrix*)rez;
 
+    // Проверка совместимости размерностей (столбцы первой равны строкам второй)
     if (m1->typeinfo != m2->typeinfo) return;
     if (m1->cols != m2->rows) return;
     if (r->rows != m1->rows || r->cols != m2->cols) return;
@@ -40,9 +45,11 @@ void generic_multiplication(const void* matrix1, const void* matrix2, void* rez)
     char* b = (char*)m2->matrix;
     char* rez_matrix = (char*)r->matrix;
     
+    // Временные переменные для хранения промежуточных вычислений
     void* sum = malloc(sz);
     void* prod = malloc(sz);
     
+    // Стандартный алгоритм умножения матриц
     for (int row = 0; row < m1->rows; ++row) {
         for (int col = 0; col < m2->cols; ++col) {
             memset(sum, 0, sz);
@@ -57,6 +64,7 @@ void generic_multiplication(const void* matrix1, const void* matrix2, void* rez)
     free(prod);
 }
 
+// Универсальная функция умножения матрицы на скаляр
 void generic_scalar_multiplication(const void* matrix1, const void* scalar, void* rez) {
     const Matrix* m1 = (const Matrix*)matrix1;
     Matrix* r = (Matrix*)rez;
@@ -67,6 +75,7 @@ void generic_scalar_multiplication(const void* matrix1, const void* scalar, void
     char* mat = (char*)m1->matrix;
     char* rez_matrix = (char*)r->matrix;
     
+    // Поэлементное умножение на скаляр
     for (int row = 0; row < m1->rows; ++row) {
         for (int col = 0; col < m1->cols; ++col) {
             int ind = row * m1->cols + col;
@@ -75,16 +84,19 @@ void generic_scalar_multiplication(const void* matrix1, const void* scalar, void
     }
 }
 
+// Универсальная функция транспонирования матрицы
 void generic_transponation(const void* matrix, void* rez) {
     const Matrix* m = (const Matrix*)matrix;
     Matrix* r = (Matrix*)rez;
     
+    // Проверка размерностей для транспонирования
     if (r->rows != m->cols || r->cols != m->rows) return;
 
     size_t sz = m->typeinfo->size;
     char* mat = (char*)m->matrix;
     char* rez_matrix = (char*)r->matrix;
     
+    // Замена строк на столбцы
     for (int row = 0; row < m->rows; ++row) {
         for (int col = 0; col < m->cols; ++col) {
             memcpy(rez_matrix + (col * r->cols + row) * sz, 
@@ -93,39 +105,47 @@ void generic_transponation(const void* matrix, void* rez) {
     }
 }
 
+// Универсальная функция прибавления к строке линейной комбинации других строк (для метода Гаусса)
 Matrix* generic_add_linear_combination(Matrix* matrix, int rowIndex, void* alphas) {
     size_t sz = matrix->typeinfo->size;
     char* m1 = (char*)matrix->matrix;
     char* alph = (char*)alphas;
     
+    // Создаем новую матрицу для результата
     Matrix* rezult = matrix_create((TypeInfo*)matrix->typeinfo, matrix->rows, matrix->cols);
     if (!rezult) return NULL;
+    
+    // Копируем исходную матрицу
     memcpy(rezult->matrix, m1, matrix->rows * matrix->cols * sz);
     char* rezult_matrix = (char*)rezult->matrix;
     
     void* prod = malloc(sz);
     int current_koof;
     
+    // Прибавляем к выбранной строке (rowIndex) остальные строки умноженные на коэффициенты
     for (int col = 0; col < matrix->cols; ++col) {
         current_koof = 0;
         for (int row = 0; row < matrix->rows; ++row) {
-            if (row == rowIndex) continue;
+            if (row == rowIndex) continue; // Пропускаем текущую строку
             
             matrix->typeinfo->mull(rezult_matrix + (row * matrix->cols + col) * sz, alph + current_koof * sz, prod);
             matrix->typeinfo->sum(rezult_matrix + (rowIndex * matrix->cols + col) * sz,  prod,  rezult_matrix + (rowIndex * matrix->cols + col) * sz);
             ++current_koof;
         }
     }
+    
     free(prod);
     return rezult;
 }
 
+// Универсальная функция вывода матрицы на экран
 void generic_print(const void* matrix, int el) {
     const Matrix* m = (const Matrix*)matrix;
     size_t sz = m->typeinfo->size;
     char* mat = (char*)m->matrix;
     int total = m->rows * m->cols;
     
+    // Вывод одиночного элемента, если задан корректный индекс >= 0
     if (el >= 0) {
         if (el >= total) return;
         m->typeinfo->print_element(mat + el * sz);
@@ -133,6 +153,7 @@ void generic_print(const void* matrix, int el) {
         return;
     }
     
+    // Вывод всей матрицы
     for (int row = 0; row < m->rows; ++row) {
         for (int col = 0; col < m->cols; ++col) {
             m->typeinfo->print_element(mat + (row * m->cols + col) * sz);

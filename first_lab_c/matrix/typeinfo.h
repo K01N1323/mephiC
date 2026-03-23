@@ -2,15 +2,15 @@
 #define TYPEINFO_H
 #include "matrix.h"
 #include <stddef.h>
+
 typedef struct Matrix Matrix;
-typedef struct{
-    size_t size;
-    void (*sum)(const void* a, const void* b, void* out);
-    void (*mull)(const void* a, const void* b, void* out);
-    void (*print_element)(const void* elem);
-}TypeInfo;
+
+// Структура, хранящая функции и метаданные для специфичного типа элементов матрицы
+typedef struct {
+    size_t size;                                           // Размер одного элемента в байтах
+    void (*sum)(const void* a, const void* b, void* out);  // Функция сложения двух элементов
+    void (*mull)(const void* a, const void* b, void* out); // Функция умножения двух элементов
+    void (*print_element)(const void* elem);               // Функция вывода элемента на экран
+} TypeInfo;
+
 #endif //typeinfo.h
-// перенести функции в структуру Matrix
-// геттеры инфы о данных const
-// функция печати элемента одна для всеъ типов данных
-// она вызывает печать из себя всей матрицы

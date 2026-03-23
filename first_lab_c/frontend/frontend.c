@@ -7,8 +7,11 @@
 #include "bool_info.h"
 #include <stdlib.h>
 #define max_matrices 50
+
 static Matrix* matrices[max_matrices];
 static int matrices_count = 0;
+
+// Выводит доступные команды меню для пользователя
 void print_menu(void){
     printf("Выберите действие: \n");
     printf("1 – создать int матрицу\n");
@@ -27,15 +30,19 @@ void print_menu(void){
     printf("14 - создать boolean матрицу\n");
     printf("-1 – выйти из программы\n");
 }
+// Выполняет действие в зависимости от выбранного пункта меню (flag)
 int actions(int flag){
     int rows, cols, num, num_element, i, j;
+    
     switch (flag) {
         case -1: {
+            // Очистка памяти перед выходом
             for (int i = 0; i < matrices_count; i++) {
                 matrix_free(matrices[i]);
             }
             return 1;
         }
+        
         case 1: {
             printf("Введите количество строк и рядов в матрице: ");
             scanf("%d %d", &rows, &cols);
@@ -51,6 +58,7 @@ int actions(int flag){
             }
             break;
         }
+        
         case 2: {
             printf("Введите количество строк и рядов в матрице: ");
             scanf("%d %d", &rows, &cols);
@@ -66,6 +74,7 @@ int actions(int flag){
             }
             break;
         }
+        
         case 3: {
             printf("Введите количество строк и рядов в матрице: ");
             scanf("%d %d", &rows, &cols);
@@ -81,6 +90,7 @@ int actions(int flag){
             }
             break;
         }
+        
         case 4: {
             printf("Введите номер матрицы, которую вы хотите вывести на экран: ");
             scanf("%d", &num);
@@ -93,6 +103,7 @@ int actions(int flag){
             }
             break;
         }
+        
         case 5: {
             printf("Введите номер матрицы и номер элемента, который вы хотите вывести на экран: ");
             scanf("%d %d", &num, &num_element);
@@ -104,6 +115,7 @@ int actions(int flag){
             }
             break;
         }
+        
         case 6: {
             printf("Введите номер матрицы и номер строки и столбца элемента, который вы хотите сетнуть: ");
             scanf("%d %d %d", &num, &i, &j);
@@ -136,6 +148,7 @@ int actions(int flag){
             }
             break;
         }
+        
         case 7: {
             printf("Введите номера матриц, которые вы хотите сложить: ");
             scanf("%d %d", &i, &j);
@@ -165,6 +178,7 @@ int actions(int flag){
             }
             break;
         }
+        
         case 8: {
             printf("Введите номера матриц, которые вы хотите перемножить: ");
             scanf("%d %d", &i, &j);
@@ -194,6 +208,7 @@ int actions(int flag){
             matrices_count++;
             break;
         }
+        
         case 9: {
             printf("Введите номер матрицы, которую вы хотите умножить на скаляр: ");
             scanf("%d", &num);
@@ -238,6 +253,7 @@ int actions(int flag){
             matrices_count++;
             break;
         }
+        
         case 10: {
             printf("Введите номер матрицы, которую вы хотите транспонировать: ");
             scanf("%d", &num);
